@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SimNUM Bolivia — Simulación Numérica de Crisis</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">SimNUM<span>Bolivia</span></div>
+  <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#escenario-a">A: Abastecimiento</a></li>
+    <li><a href="#escenario-b">B: Reservas</a></li>
+    <li><a href="#escenario-c">C: Precios</a></li>
+    <li><a href="#escenario-d">D: Gasto Familiar</a></li>
+    <li><a href="#escenario-e">E: Umbrales</a></li>
+    <li><a href="#escenario-f">F: Rumores</a></li>
+    <li><a href="#escenario-g">G: Conflicto Social</a></li>
+    <li><a href="#conclusiones">Conclusiones</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="inicio" class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag">DESAFÍO FINAL · MÉTODOS NUMÉRICOS</div>
+    <h1>Simulación Numérica<br><span class="accent">de Crisis en Bolivia</span></h1>
+    <p class="hero-sub">Modelado matemático del abastecimiento, precios, reservas y dinámica social en contexto de crisis. Herramienta interactiva para el análisis y toma de decisiones.</p>
+    <div class="hero-badges">
+      <span>7 Escenarios</span>
+      <span>15+ Métodos Numéricos</span>
+      <span>Datos Reales</span>
+    </div>
+    <a href="#escenario-a" class="btn-hero">Comenzar Simulación ↓</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-n">5</span><span class="stat-l">Áreas de análisis</span></div>
+    <div class="stat"><span class="stat-n">7</span><span class="stat-l">Escenarios</span></div>
+    <div class="stat"><span class="stat-n">15+</span><span class="stat-l">Métodos aplicados</span></div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO A ===================== -->
+<section id="escenario-a" class="scenario">
+  <div class="scenario-header a">
+    <div class="sc-tag">ESCENARIO A</div>
+    <h2>Optimización del Abastecimiento y Red de Transporte</h2>
+    <p>Sistemas de ecuaciones lineales para distribuir combustibles y alimentos desde plantas hacia zonas de la ciudad.</p>
+    <div class="methods-used">
+      <span>Jacobi</span><span>Gauss-Seidel</span><span>SOR</span><span>LU</span><span>Gradiente Conjugado</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Modelo Matemático</h3>
+      <p>Se representa la distribución como un sistema Ax = b donde cada ecuación expresa el balance de abastecimiento por zona. Las variables x₁…x₉ representan las cantidades enviadas de cada planta a cada zona.</p>
+      <div class="matrix-display">
+        <p><strong>Restricciones del sistema:</strong></p>
+        <p>x₁ + x₂ + x₃ = C₁ (capacidad Planta 1)</p>
+        <p>x₄ + x₅ + x₆ = C₂ (capacidad Planta 2)</p>
+        <p>x₇ + x₈ + x₉ = C₃ (capacidad Planta 3)</p>
+        <p>x₁ + x₄ + x₇ ≥ D_N (demanda Zona Norte)</p>
+        <p>x₂ + x₅ + x₈ ≥ D_C (demanda Zona Centro)</p>
+        <p>x₃ + x₆ + x₉ ≥ D_S (demanda Zona Sur)</p>
+      </div>
+    </div>
+
+    <div class="input-panel">
+      <h3>⚙️ Configurar Sistema</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Método de resolución</label>
+          <select id="sle-method">
+            <option value="gauss-seidel">Gauss-Seidel</option>
+            <option value="jacobi">Jacobi</option>
+            <option value="sor">SOR (ω configurable)</option>
+            <option value="lu">Descomposición LU</option>
+            <option value="conjugado">Gradiente Conjugado</option>
+          </select>
+        </div>
+        <div class="form-group" id="sor-omega-group" style="display:none">
+          <label>Parámetro ω (SOR)</label>
+          <input type="number" id="sor-omega" value="1.25" step="0.05" min="0.1" max="1.99">
+        </div>
+        <div class="form-group">
+          <label>Tolerancia</label>
+          <input type="number" id="sle-tol" value="0.0001" step="0.00001">
+        </div>
+        <div class="form-group">
+          <label>¿Simular bloqueo de ruta?</label>
+          <select id="sle-bloqueo">
+            <option value="ninguno">Sin bloqueo</option>
+            <option value="planta1-norte">Planta 1 → Norte bloqueada</option>
+            <option value="planta2-centro">Planta 2 → Centro bloqueada</option>
+            <option value="planta3-sur">Planta 3 → Sur bloqueada</option>
+          </select>
+        </div>
+      </div>
+      <h4>Capacidades de Plantas (unidades/día)</h4>
+      <div class="form-grid">
+        <div class="form-group"><label>Planta 1</label><input type="number" id="cap1" value="100"></div>
+        <div class="form-group"><label>Planta 2</label><input type="number" id="cap2" value="80"></div>
+        <div class="form-group"><label>Planta 3</label><input type="number" id="cap3" value="120"></div>
+      </div>
+      <h4>Demanda Mínima por Zona</h4>
+      <div class="form-grid">
+        <div class="form-group"><label>Zona Norte</label><input type="number" id="dem-norte" value="90"></div>
+        <div class="form-group"><label>Zona Centro</label><input type="number" id="dem-centro" value="110"></div>
+        <div class="form-group"><label>Zona Sur</label><input type="number" id="dem-sur" value="100"></div>
+      </div>
+      <button class="btn-run" onclick="runSLE()">▶ Ejecutar Simulación</button>
+    </div>
+
+    <div class="results-panel" id="sle-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="sle-answer"></div>
+      <div id="sle-table-container"></div>
+      <canvas id="sle-chart" height="200"></canvas>
+      <div class="interpretation" id="sle-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO B ===================== -->
+<section id="escenario-b" class="scenario">
+  <div class="scenario-header b">
+    <div class="sc-tag">ESCENARIO B</div>
+    <h2>Vaciado Crítico de Reservas de Carburantes</h2>
+    <p>Ecuaciones diferenciales ordinarias para simular la disminución de reservas cuando la demanda supera el abastecimiento.</p>
+    <div class="methods-used">
+      <span>Euler</span><span>Heun</span><span>Runge-Kutta RK4</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Modelo Matemático</h3>
+      <p>La reserva R(t) evoluciona según: <strong>R'(t) = entrada(t) − consumo(t)</strong></p>
+      <p>Con consumo que puede aumentar por demanda normal, bloqueo o pánico social:</p>
+      <p><code>consumo(t) = consumo_base × (1 + factor_panico × t)</code></p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Parámetros del Sistema</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Reserva inicial R₀ (miles de litros)</label><input type="number" id="ode-r0" value="500" step="10"></div>
+        <div class="form-group"><label>Entrada diaria (miles de litros)</label><input type="number" id="ode-entrada" value="30" step="5"></div>
+        <div class="form-group"><label>Consumo base diario</label><input type="number" id="ode-consumo" value="50" step="5"></div>
+        <div class="form-group"><label>Factor de pánico (0 = sin pánico)</label><input type="number" id="ode-panico" value="0.02" step="0.005" min="0" max="0.5"></div>
+        <div class="form-group"><label>Días a simular</label><input type="number" id="ode-dias" value="20" min="5" max="60"></div>
+        <div class="form-group"><label>Paso h</label><input type="number" id="ode-h" value="0.5" step="0.1" min="0.1" max="2"></div>
+      </div>
+      <button class="btn-run" onclick="runODE()">▶ Simular Vaciado</button>
+    </div>
+    <div class="results-panel" id="ode-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="ode-answer"></div>
+      <canvas id="ode-chart" height="220"></canvas>
+      <div id="ode-table-container"></div>
+      <div class="interpretation" id="ode-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO C ===================== -->
+<section id="escenario-c" class="scenario">
+  <div class="scenario-header c">
+    <div class="sc-tag">ESCENARIO C</div>
+    <h2>Desabastecimiento y Curva Continua de Precios</h2>
+    <p>Interpolación para reconstruir la evolución de precios de alimentos básicos a partir de datos dispersos.</p>
+    <div class="methods-used">
+      <span>Lagrange</span><span>Newton</span><span>Splines Cúbicos</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Datos de Referencia (La Paz, 2024)</h3>
+      <p>Precios registrados de productos básicos en mercados populares durante el periodo de desabastecimiento:</p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Configurar Interpolación</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Producto a analizar</label>
+          <select id="interp-producto" onchange="updateProductoPrices()">
+            <option value="papa">Papa (Bs/kg)</option>
+            <option value="arroz">Arroz (Bs/kg)</option>
+            <option value="azucar">Azúcar (Bs/kg)</option>
+            <option value="gasolina">Gasolina (Bs/L)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Método de interpolación</label>
+          <select id="interp-method">
+            <option value="lagrange">Lagrange</option>
+            <option value="newton">Newton (Diferencias Divididas)</option>
+            <option value="spline">Splines Cúbicos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estimar precio en día</label>
+          <input type="number" id="interp-dia" value="12" min="1" max="30">
+        </div>
+      </div>
+      <div id="interp-data-preview" class="data-preview"></div>
+      <button class="btn-run" onclick="runInterpolation()">▶ Interpolar Curva</button>
+    </div>
+    <div class="results-panel" id="interp-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="interp-answer"></div>
+      <canvas id="interp-chart" height="220"></canvas>
+      <div id="interp-table-container"></div>
+      <div class="interpretation" id="interp-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO D ===================== -->
+<section id="escenario-d" class="scenario">
+  <div class="scenario-header d">
+    <div class="sc-tag">ESCENARIO D</div>
+    <h2>Costo Acumulado y Pérdida del Poder Adquisitivo</h2>
+    <p>Integración numérica para calcular cuánto gastó una familia durante el mes de crisis.</p>
+    <div class="methods-used">
+      <span>Trapecio</span><span>Simpson 1/3</span><span>Simpson 3/8</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Modelo</h3>
+      <p>El gasto acumulado es el área bajo la curva de precios: <strong>Gasto = ∫ P(t) · Q dt</strong></p>
+      <p>Comparando con el escenario sin crisis (precio constante), obtenemos la pérdida de poder adquisitivo.</p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Canasta Familiar Básica</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Ingreso mensual familiar (Bs)</label><input type="number" id="int-ingreso" value="3000"></div>
+        <div class="form-group"><label>Consumo diario papa (kg)</label><input type="number" id="int-q-papa" value="0.5" step="0.1"></div>
+        <div class="form-group"><label>Consumo diario arroz (kg)</label><input type="number" id="int-q-arroz" value="0.3" step="0.1"></div>
+        <div class="form-group"><label>Consumo diario azúcar (kg)</label><input type="number" id="int-q-azucar" value="0.1" step="0.05"></div>
+        <div class="form-group"><label>Método de integración</label>
+          <select id="int-method">
+            <option value="trapecio">Regla del Trapecio</option>
+            <option value="simpson13">Simpson 1/3</option>
+            <option value="simpson38">Simpson 3/8</option>
+            <option value="todos">Comparar todos</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Subintervalos n</label><input type="number" id="int-n" value="30" min="6" max="60"></div>
+      </div>
+      <button class="btn-run" onclick="runIntegration()">▶ Calcular Gasto</button>
+    </div>
+    <div class="results-panel" id="int-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="int-answer"></div>
+      <canvas id="int-chart" height="220"></canvas>
+      <div id="int-table-container"></div>
+      <div class="interpretation" id="int-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO E ===================== -->
+<section id="escenario-e" class="scenario">
+  <div class="scenario-header e">
+    <div class="sc-tag">ESCENARIO E</div>
+    <h2>Umbrales Críticos de Abastecimiento</h2>
+    <p>Raíces de ecuaciones para encontrar puntos de quiebre: cuándo el gasto supera el ingreso, cuándo la reserva colapsa, y cuándo el descontento se masifica.</p>
+    <div class="methods-used">
+      <span>Bisección</span><span>Newton-Raphson</span><span>Secante</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Funciones de Umbral</h3>
+      <p>Se buscan las raíces de funciones que representan estados críticos del sistema:</p>
+      <p><strong>f₁(x):</strong> Gasto familiar vs. Ingreso — ¿cuándo el gasto supera el ingreso?</p>
+      <p><strong>f₂(x):</strong> Tasa de reposición — ¿cuándo entrada = consumo?</p>
+      <p><strong>f₃(x):</strong> Umbral social — ¿cuándo el descontento se masifica?</p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Configurar Búsqueda de Raíz</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Función umbral</label>
+          <select id="root-func" onchange="updateRootFuncInfo()">
+            <option value="gasto">f(x) = Gasto(x) − Ingreso (días hasta quiebre)</option>
+            <option value="reserva">f(x) = Entrada(x) − Consumo (tasa crítica)</option>
+            <option value="social">f(x) = Modelo de descontento social</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Método</label>
+          <select id="root-method">
+            <option value="biseccion">Bisección</option>
+            <option value="newton">Newton-Raphson</option>
+            <option value="secante">Secante</option>
+          </select>
+        </div>
+        <div class="form-group"><label>x inicial (a o x₀)</label><input type="number" id="root-a" value="0" step="1"></div>
+        <div class="form-group"><label>x final (b o x₁)</label><input type="number" id="root-b" value="30" step="1"></div>
+        <div class="form-group"><label>Tolerancia</label><input type="number" id="root-tol" value="0.0001" step="0.00001"></div>
+        <div class="form-group"><label>Iteraciones máx.</label><input type="number" id="root-maxiter" value="50"></div>
+      </div>
+      <div id="root-func-info" class="info-box"></div>
+      <button class="btn-run" onclick="runRoots()">▶ Encontrar Umbral Crítico</button>
+    </div>
+    <div class="results-panel" id="root-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="root-answer"></div>
+      <canvas id="root-chart" height="220"></canvas>
+      <div id="root-table-container"></div>
+      <div class="interpretation" id="root-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO F ===================== -->
+<section id="escenario-f" class="scenario">
+  <div class="scenario-header f">
+    <div class="sc-tag">ESCENARIO F</div>
+    <h2>Rumores de Desabastecimiento y Pánico</h2>
+    <p>Sistemas mal condicionados para modelar cómo pequeños cambios en la información generan grandes cambios en la demanda.</p>
+    <div class="methods-used">
+      <span>Sistemas Lineales</span><span>Número de Condición</span><span>Perturbación</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Modelo de Sensibilidad</h3>
+      <p>El número de condición κ(A) mide cuánto se amplifica el error: <strong>κ(A) = ‖A‖ · ‖A⁻¹‖</strong></p>
+      <p>Un sistema con κ alto es sensible: un pequeño rumor (perturbación δb) puede causar grandes cambios en la distribución.</p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Simular Nivel de Rumor</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nivel de rumor</label>
+          <select id="rumor-nivel">
+            <option value="bajo">Rumor bajo (+5% demanda)</option>
+            <option value="medio">Rumor medio (+15% demanda)</option>
+            <option value="alto">Rumor alto (+30% demanda)</option>
+            <option value="panico">Pánico de compra (+60% demanda)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Zona más afectada</label>
+          <select id="rumor-zona">
+            <option value="norte">Zona Norte</option>
+            <option value="centro">Zona Centro</option>
+            <option value="sur">Zona Sur</option>
+            <option value="todas">Todas las zonas</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-run" onclick="runRumor()">▶ Analizar Impacto del Rumor</button>
+    </div>
+    <div class="results-panel" id="rumor-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="rumor-answer"></div>
+      <canvas id="rumor-chart" height="220"></canvas>
+      <div id="rumor-table-container"></div>
+      <div class="interpretation" id="rumor-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCENARIO G ===================== -->
+<section id="escenario-g" class="scenario">
+  <div class="scenario-header g">
+    <div class="sc-tag">ESCENARIO G</div>
+    <h2>Modelo de Difusión de Descontento Social</h2>
+    <p>Sistema de EDOs para modelar la dinámica entre ciudadanos neutrales, manifestantes y mediadores.</p>
+    <div class="methods-used">
+      <span>Heun</span><span>RK4</span>
+    </div>
+  </div>
+  <div class="scenario-body">
+    <div class="theory-box">
+      <h3>📐 Modelo NMD</h3>
+      <p><strong>N'(t) = −aNM + bD</strong> (Neutrales se movilizan o retornan)</p>
+      <p><strong>M'(t) = aNM − cMD</strong> (Manifestantes activos)</p>
+      <p><strong>D'(t) = kM − rD</strong> (Mediadores institucionales)</p>
+    </div>
+    <div class="input-panel">
+      <h3>⚙️ Parámetros del Modelo Social</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>N₀ — Neutrales iniciales</label><input type="number" id="soc-n0" value="1000"></div>
+        <div class="form-group"><label>M₀ — Manifestantes iniciales</label><input type="number" id="soc-m0" value="50"></div>
+        <div class="form-group"><label>D₀ — Mediadores iniciales</label><input type="number" id="soc-d0" value="20"></div>
+        <div class="form-group"><label>a — Tasa de contagio del descontento</label><input type="number" id="soc-a" value="0.0008" step="0.0001"></div>
+        <div class="form-group"><label>b — Tasa de retorno a neutralidad</label><input type="number" id="soc-b" value="0.03" step="0.005"></div>
+        <div class="form-group"><label>c — Efectividad del diálogo</label><input type="number" id="soc-c" value="0.002" step="0.0005"></div>
+        <div class="form-group"><label>k — Reacción institucional</label><input type="number" id="soc-k" value="0.05" step="0.005"></div>
+        <div class="form-group"><label>r — Desgaste de mediadores</label><input type="number" id="soc-r" value="0.04" step="0.005"></div>
+        <div class="form-group"><label>Días a simular</label><input type="number" id="soc-dias" value="60" min="10" max="180"></div>
+        <div class="form-group">
+          <label>Método</label>
+          <select id="soc-method">
+            <option value="rk4">Runge-Kutta RK4</option>
+            <option value="heun">Heun</option>
+          </select>
+        </div>
+      </div>
+      <div class="scenario-buttons">
+        <button class="btn-preset" onclick="setPreset('sin-mediadores')">Sin mediadores</button>
+        <button class="btn-preset" onclick="setPreset('dialogo-efectivo')">Diálogo efectivo</button>
+        <button class="btn-preset" onclick="setPreset('alta-conflictividad')">Alta conflictividad</button>
+      </div>
+      <button class="btn-run" onclick="runSocial()">▶ Simular Dinámica Social</button>
+    </div>
+    <div class="results-panel" id="soc-results" style="display:none">
+      <h3>📊 Resultados</h3>
+      <div id="soc-answer"></div>
+      <canvas id="soc-chart" height="260"></canvas>
+      <div id="soc-table-container"></div>
+      <div class="interpretation" id="soc-interpretation"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSIONES -->
+<section id="conclusiones" class="scenario conclusions-section">
+  <div class="scenario-header conc">
+    <div class="sc-tag">CONCLUSIONES</div>
+    <h2>Reflexiones y Aprendizajes</h2>
+  </div>
+  <div class="conclusions-grid">
+    <div class="conc-card">
+      <div class="conc-icon">🔢</div>
+      <h3>Métodos más útiles</h3>
+      <p>RK4 demostró mayor estabilidad para la simulación de reservas y dinámica social. Gauss-Seidel convergió más rápido que Jacobi en los sistemas de abastecimiento. Los splines cúbicos generaron curvas de precios más realistas.</p>
+    </div>
+    <div class="conc-card">
+      <div class="conc-icon">⚠️</div>
+      <h3>Limitaciones del modelo</h3>
+      <p>Los modelos asumen comportamiento lineal en algunos tramos. Los parámetros del modelo social son difíciles de calibrar con datos reales. La interpolación puede oscilar con datos muy dispersos (fenómeno de Runge).</p>
+    </div>
+    <div class="conc-card">
+      <div class="conc-icon">🇧🇴</div>
+      <h3>Contexto boliviano</h3>
+      <p>Los escenarios reflejan la crisis de abastecimiento real. La simulación muestra que un 15% de incremento en demanda (rumor medio) puede desestabilizar el sistema de distribución en pocas semanas.</p>
+    </div>
+    <div class="conc-card">
+      <div class="conc-icon">🚀</div>
+      <h3>Mejoras futuras</h3>
+      <p>Integrar datos reales de YPFB y mercados. Añadir geolocalización de zonas. Implementar optimización con programación lineal. Conectar el modelo social con datos de redes sociales.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>SimNUM Bolivia · Desafío Final de Métodos Numéricos · 2024</p>
+  <p>Modelos matemáticos aplicados a la realidad boliviana · HTML + CSS + JS · Chart.js</p>
+</footer>
+
+<script src="methods.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
